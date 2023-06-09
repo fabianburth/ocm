@@ -100,6 +100,18 @@ func (a *AccessSpec) GetReferenceHint(cv cpi.ComponentVersionAccess) string {
 	return hint
 }
 
+func (a *AccessSpec) GetInexpensiveContentVersionIdentity(cv cpi.ComponentVersionAccess) string {
+	ref, err := oci.ParseRef(a.ImageReference)
+	if err != nil {
+		return ""
+	}
+	if ref.Digest != nil {
+		return ref.Digest.String()
+	}
+	// TODO: optimize for oci registries
+	return ""
+}
+
 func (_ *AccessSpec) GetType() string {
 	return Type
 }

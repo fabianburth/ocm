@@ -47,4 +47,6 @@ type ComponentVersionContainer interface {
 	io.Closer
 
 	AccessMethod(a cpi.AccessSpec) (cpi.AccessMethod, error)
+
+	GetInexpensiveContentVersionIdentity(a cpi.AccessSpec) string
 }

@@ -6,6 +6,7 @@ package comparch
 
 import (
 	"github.com/mandelsoft/vfs/pkg/vfs"
+	"github.com/open-component-model/ocm/pkg/common/accessio"
 
 	"github.com/open-component-model/ocm/pkg/common"
 	"github.com/open-component-model/ocm/pkg/common/accessobj"
@@ -100,9 +101,21 @@ func (c *ComponentArchive) AccessMethod(a cpi.AccessSpec) (cpi.AccessMethod, err
 		if err != nil {
 			return nil, err
 		}
-		return newLocalFilesystemBlobAccessMethod(accessSpec.(*localblob.AccessSpec), c)
+		return newLocalFilesystemBlobAccessMethod(accessSpec.(*localblob.AccessSpec), c), nil
 	}
 	return nil, errors.ErrNotSupported(errors.KIND_ACCESSMETHOD, a.GetType(), "component archive")
+}
+
+func (c *ComponentArchive) GetInexpensiveContentVersionIdentity(a cpi.AccessSpec) string {
+	if a.GetKind() == localblob.Type || a.GetKind() == localfsblob.Type {
+		accessSpec, err := c.GetContext().AccessSpecForSpec(a)
+		if err != nil {
+			return ""
+		}
+		digest, _ := accessio.Digest(newLocalFilesystemBlobAccessMethod(accessSpec.(*localblob.AccessSpec), c))
+		return digest.String()
+	}
+	return ""
 }
 
 func (c *ComponentArchive) GetBlobData(name string) (cpi.DataAccess, error) {

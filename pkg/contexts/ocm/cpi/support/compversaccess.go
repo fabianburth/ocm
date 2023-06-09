@@ -86,6 +86,10 @@ func (s *ComponentVersionAccess) AccessMethod(a cpi.AccessSpec) (cpi.AccessMetho
 	return s.componentVersionAccessImpl.AccessMethod(s, a)
 }
 
+func (s *ComponentVersionAccess) GetInexpensiveContentVersionIdentity(a cpi.AccessSpec) string {
+	return s.componentVersionAccessImpl.GetInexpensiveContentVersionIdentity(s, a)
+}
+
 func (s *ComponentVersionAccess) SetSource(meta *cpi.SourceMeta, acc compdesc.AccessSpec) error {
 	return s.componentVersionAccessImpl.SetSource(s, meta, acc)
 }
@@ -254,6 +258,14 @@ func (c *componentVersionAccessImpl) AccessMethod(cv cpi.ComponentVersionAccess,
 		return a.AccessMethod(cv)
 	}
 	return c.base.AccessMethod(a)
+}
+
+func (c *componentVersionAccessImpl) GetInexpensiveContentVersionIdentity(cv cpi.ComponentVersionAccess, a cpi.AccessSpec) string {
+	if !a.IsLocal(c.base.GetContext()) {
+		// fall back to original version
+		return a.GetInexpensiveContentVersionIdentity(cv)
+	}
+	return c.base.GetInexpensiveContentVersionIdentity(a)
 }
 
 func (a *componentVersionAccessImpl) GetDescriptor() *compdesc.ComponentDescriptor {

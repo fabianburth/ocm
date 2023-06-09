@@ -6,6 +6,7 @@ package relativeociref
 
 import (
 	"fmt"
+	"github.com/open-component-model/ocm/pkg/contexts/oci"
 
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/cpi"
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/internal"
@@ -60,4 +61,23 @@ func (a *AccessSpec) AccessMethod(access cpi.ComponentVersionAccess) (cpi.Access
 
 func (a *AccessSpec) GetReferenceHint(cv internal.ComponentVersionAccess) string {
 	return a.Reference
+}
+
+func (a *AccessSpec) GetDigest() (string, bool) {
+	ref, err := oci.ParseRef(a.Reference)
+	if err != nil {
+		return "", true
+	}
+	if ref.Digest != nil {
+		return ref.Digest.String(), true
+	}
+	return "", false
+}
+
+func (a *AccessSpec) GetInexpensiveContentVersionIdentity(cv cpi.ComponentVersionAccess) string {
+	d, ok := a.GetDigest()
+	if ok {
+		return d
+	}
+	return cv.GetInexpensiveContentVersionIdentity(a)
 }
