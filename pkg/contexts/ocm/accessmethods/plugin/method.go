@@ -54,8 +54,7 @@ func (s *AccessSpec) GetReferenceHint(cv cpi.ComponentVersionAccess) string {
 }
 
 func (s *AccessSpec) GetInexpensiveContentVersionIdentity(cv cpi.ComponentVersionAccess) string {
-	return ""
-	// TODO: extend plugin interface
+	return s.handler.GetInexpensiveContentVersionIdentity(s, cv)
 }
 
 func (s *AccessSpec) Handler() *PluginHandler {

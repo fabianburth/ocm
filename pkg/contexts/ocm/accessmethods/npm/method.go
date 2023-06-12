@@ -109,13 +109,13 @@ func (a *AccessSpec) getPackageMeta(ctx cpi.Context) (*meta, error) {
 		return nil, errors.Wrapf(err, "cannot get version metadata for %s", url)
 	}
 
-	var meta meta
+	var metadata meta
 
-	err = json.Unmarshal(buf.Bytes(), &meta)
+	err = json.Unmarshal(buf.Bytes(), &metadata)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot unmarshal version metadata for %s", url)
 	}
-	return &meta, nil
+	return &metadata, nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////

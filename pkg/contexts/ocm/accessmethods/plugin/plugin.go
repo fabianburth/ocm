@@ -110,6 +110,47 @@ func (p *PluginHandler) GetReferenceHint(spec *AccessSpec, cv cpi.ComponentVersi
 	return info.Hint
 }
 
+func (p *PluginHandler) GetInexpensiveContentVersionIdentity(spec *AccessSpec, cv cpi.ComponentVersionAccess) string {
+	mspec := p.GetAccessMethodDescriptor(spec.GetKind(), spec.GetVersion())
+	if mspec == nil {
+		return "unknown type " + spec.GetType()
+	}
+
+	if !mspec.SupportContentIdentity {
+		return ""
+	}
+
+	info, err := p.Info(spec)
+	if err != nil {
+		return ""
+	}
+
+	var creds credentials.Credentials
+	if len(info.ConsumerId) > 0 {
+		creds, err = credentials.CredentialsForConsumer(cv.GetContext(), info.ConsumerId, hostpath.IdentityMatcher(info.ConsumerId.Type()))
+		if err != nil {
+			return ""
+		}
+	}
+
+	var creddata json.RawMessage
+	if creds != nil {
+		creddata, err = json.Marshal(creds)
+		if err != nil {
+			return "cannot marshal creds"
+		}
+	}
+	specdata, err := spec.GetRaw()
+	if err != nil {
+		return ""
+	}
+	id, err := p.plug.Identity(creddata, specdata)
+	if err != nil {
+		return ""
+	}
+	return id
+}
+
 func (p *PluginHandler) Validate(spec *AccessSpec) (*ppi.AccessSpecInfo, error) {
 	data, err := spec.GetRaw()
 	if err != nil {

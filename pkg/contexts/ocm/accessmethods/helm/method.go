@@ -84,7 +84,7 @@ func (s *AccessSpec) AccessMethod(access cpi.ComponentVersionAccess) (cpi.Access
 
 func (a *AccessSpec) GetInexpensiveContentVersionIdentity(access cpi.ComponentVersionAccess) string {
 	return ""
-	//TODO: research possibilities with provenance file
+	// TODO: research possibilities with provenance file
 }
 
 ///////////////////

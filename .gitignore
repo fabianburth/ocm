@@ -4,9 +4,12 @@
 *.sw[pqo]
 main
 /ecrplugin
+/cmds/ecrplugin/ecrplugin
 /ocm
 /demoplugin
+/cmds/demoplugin/demoplugin
 /helminstaller
+/cmds/helminstaller/helminstaller
 /dist
 /tmp
 local

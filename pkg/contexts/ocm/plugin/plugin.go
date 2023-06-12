@@ -20,6 +20,7 @@ import (
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/accessmethod"
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/accessmethod/compose"
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/accessmethod/get"
+	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/accessmethod/identity"
 	accval "github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/accessmethod/validate"
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/action"
 	"github.com/open-component-model/ocm/pkg/contexts/ocm/plugin/ppi/cmds/action/execute"
@@ -177,6 +178,19 @@ func (p *pluginImpl) Get(w io.Writer, creds, spec json.RawMessage) error {
 	}
 	_, err := p.Exec(nil, w, args...)
 	return err
+}
+
+func (p *pluginImpl) Identity(creds, spec json.RawMessage) (string, error) {
+	args := []string{accessmethod.Name, identity.Name, string(spec)}
+	if creds != nil {
+		args = append(args, "--"+identity.OptCreds, string(creds))
+	}
+	result, err := p.Exec(nil, nil, args...)
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
 }
 
 func (p *pluginImpl) Put(name string, r io.Reader, artType, mimeType, hint string, creds, target json.RawMessage) (ocm.AccessSpec, error) {

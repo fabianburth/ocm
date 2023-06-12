@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package get
+package identity
 
 import (
 	"encoding/json"
-	"io"
-	"os"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -22,7 +21,7 @@ import (
 )
 
 const (
-	Name     = "get"
+	Name     = "identity"
 	OptCreds = commonppi.OptCreds
 )
 
@@ -31,9 +30,9 @@ func New(p ppi.Plugin) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   Name + " [<flags>] <access spec>",
-		Short: "get blob",
+		Short: "get blob identity",
 		Long: `
-Evaluate the given access specification and return the described blob on
+Evaluate the given access specification and return a inexpensive identity of the blob content if possible on
 *stdout*.`,
 		Args: cobra.ExactArgs(1),
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
@@ -61,7 +60,6 @@ func (o *Options) Complete(args []string) error {
 	if err := runtime.DefaultYAMLEncoding.Unmarshal([]byte(args[0]), &o.Specification); err != nil {
 		return errors.Wrapf(err, "invalid repository specification")
 	}
-
 	return nil
 }
 
@@ -75,15 +73,22 @@ func Command(p ppi.Plugin, cmd *cobra.Command, opts *Options) error {
 	if m == nil {
 		return errors.ErrUnknown(descriptor.KIND_ACCESSMETHOD, spec.GetType())
 	}
+
 	_, err = m.ValidateSpecification(p, spec)
 	if err != nil {
 		return err
 	}
-	r, err := m.Reader(p, spec, opts.Credentials)
+
+	idp, ok := m.(ppi.ContentVersionIdentityProvider)
+	if !ok {
+		fmt.Println("")
+		return nil
+	}
+
+	id, err := idp.GetInexpensiveContentVersionIdentity(p, spec, opts.Credentials)
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(os.Stdout, r)
-	r.Close()
+	fmt.Println(id)
 	return err
 }
