@@ -42,6 +42,14 @@ type AccessSpec interface {
 	Describe(Context) string
 	IsLocal(Context) bool
 	GlobalAccessSpec(Context) AccessSpec
+	// AccessMethod provides an access method implementation for
+	// an access spec. This might be a repository local implementation
+	// or a global one. It might be implemented directly by the AccessSpec
+	// for global AccessMethods or forwarded to the ComponentVersion for
+	// local access methods. It may only be forwarded for AccessSpecs stating
+	// to be local (IsLocal()==true).
+	// This forwarding is necessary because the concrete implementation of
+	// the currently used OCM Repository is not known to the AccessSpec.
 	AccessMethod(access ComponentVersionAccess) (AccessMethod, error)
 	// GetInexpensiveContentVersionIdentity implements a method that attempts to provide an inexpensive identity.
 	// Therefore, an identity that can be provided without requiring the entire object (e.g. calculating the digest from

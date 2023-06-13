@@ -141,8 +141,8 @@ func (a *AccessSpec) AccessMethod(cv cpi.ComponentVersionAccess) (cpi.AccessMeth
 	return cv.AccessMethod(a)
 }
 
-func (a *AccessSpec) GetInexpensiveContentVersionIdentity(access cpi.ComponentVersionAccess) string {
-	return access.GetInexpensiveContentVersionIdentity(a)
+func (a *AccessSpec) GetInexpensiveContentVersionIdentity(cv cpi.ComponentVersionAccess) string {
+	return cv.GetInexpensiveContentVersionIdentity(a)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
