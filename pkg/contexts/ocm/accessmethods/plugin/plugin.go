@@ -19,6 +19,8 @@ import (
 
 type plug = plugin.Plugin
 
+// PluginHandler is a shared object between the AccessMethod implementation and the AccessSpec implementation. The
+// object knows the actual plugin and can therefore forward the method calls to corresponding cli commands.
 type PluginHandler struct {
 	plug
 

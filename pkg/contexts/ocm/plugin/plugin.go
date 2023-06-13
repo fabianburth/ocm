@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 
 	"github.com/open-component-model/ocm/pkg/cobrautils/flagsets"
@@ -190,7 +191,7 @@ func (p *pluginImpl) Identity(creds, spec json.RawMessage) (string, error) {
 		return "", err
 	}
 
-	return string(result), nil
+	return strings.Trim(string(result), "\n"), nil
 }
 
 func (p *pluginImpl) Put(name string, r io.Reader, artType, mimeType, hint string, creds, target json.RawMessage) (ocm.AccessSpec, error) {
